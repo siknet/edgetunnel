@@ -11,6 +11,14 @@ let TCP并发拨号数 = 2, 预加载竞速拨号 = false;
 ///////////////////////////////////////////////////////主程序入口///////////////////////////////////////////////
 export default {
 	async fetch(request, env, ctx) {
+		if (env && !env.KV) {
+			for (const key in env) {
+				if (env[key] && typeof env[key].get === 'function' && typeof env[key].put === 'function') {
+					env.KV = env[key];
+					break;
+				}
+			}
+		}
 		let 请求URL文本 = request.url.replace(/%5[Cc]/g, '').replace(/\\/g, '');
 		const 请求URL锚点索引 = 请求URL文本.indexOf('#');
 		const 请求URL主体部分 = 请求URL锚点索引 === -1 ? 请求URL文本 : 请求URL文本.slice(0, 请求URL锚点索引);
